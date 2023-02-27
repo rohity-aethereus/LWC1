@@ -1,0 +1,10 @@
+<template>
+    
+    <lightning-card icon-name="standard:opportunity" class="slds-m-bottom_x-large">
+      
+            <h1 slot="title">Object Selector</h1>
+            <lightning-combobox label="Object" name="object" value={objectSelected} class="slds-m-around_medium"
+            onchange={handleObjectChange} placeholder="Select an object" options={objectOptions} required ></lightning-combobox>
+            
+    </lightning-card>
+</template>

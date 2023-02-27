@@ -1,0 +1,23 @@
+<template>
+    <div class="slds-card">
+        <h1 class="slds-text-heading_medium">Todo App</h1>
+        <div class="slds-m-around_large">
+            <ul>
+                <template for:each={todos} for:item="todo">
+                    <li key={todo.id}>
+                        {todo.title}
+                    </li>
+                </template>
+            </ul>
+            
+        </div>
+        <div class="todo-form">
+            <input type="text" placeholder="Enter todo" value={todoTitle} />
+            <button onclick={handleAddTodo}>Add</button>
+        </div>
+
+        <pre>
+            {todos}
+        </pre>
+    </div>
+</template>
