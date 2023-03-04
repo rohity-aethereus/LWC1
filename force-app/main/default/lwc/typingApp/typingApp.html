@@ -1,0 +1,24 @@
+<template >
+    <div class="slds-card" style="height:700px; width: 800px; padding: 10px;">
+        <div>
+            {paragraph}
+        </div>
+        <div>
+            <lightning-textarea label="Type the paragraph above" value={typedText} onchange={handleTextChange}
+            max-length={paragraphlength}></lightning-textarea>
+        </div>
+
+        <pre>
+                <p>Current Index : {currentIndex}</p>
+                <p>Error Indexes : 
+                    <template for:each={errorIndex} for:item="errorIndexes">
+                        <span key={errorIndexes}>{errorIndexes} </span>
+                    </template>
+                </p>
+            
+        </pre>  
+    </div>
+
+    
+    
+</template>
