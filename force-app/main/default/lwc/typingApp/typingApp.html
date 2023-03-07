@@ -1,0 +1,35 @@
+<template >
+    <div class="slds-card" style="height:700px; width: 800px; padding: 10px;">
+        <div>
+            {paragraph}
+        </div>
+        <div>
+            <lightning-textarea label="Type the paragraph above" value={typedText} onchange={handleTextChange}
+            ></lightning-textarea>
+            <lightning-input type="toggle" label="debug info" name="debuginfo" value={debug_toggle}  onchange={toggleDebug}></lightning-input>
+        </div>
+
+        <div class="slds-m-around_xx-large">
+            <p>Accuracy : {accuracy}%</p>
+            <p>Typing Speed : {speed} wpm</p>
+            <p>Time Elapsed : {timeElapsed} sec</p>
+            <lightning-button label="Reset" variant="brand" onclick={handleReset}></lightning-button>
+        </div>
+
+        <template if:true={debug_toggle}>
+            <pre>
+                <p>Current Index : {currentIndex}</p>
+                <p>Error Indexes : 
+                    <template for:each={errorIndex} for:item="errorIndexes">
+                        <span key={errorIndexes}>{errorIndexes} </span>
+                    </template>
+                </p>
+            
+        </pre>  
+        </template>
+        
+    </div>
+
+    
+    
+</template>
