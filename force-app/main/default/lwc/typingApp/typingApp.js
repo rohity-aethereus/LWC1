@@ -1,11 +1,19 @@
 import { LightningElement } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class TypingApp extends LightningElement {
     paragraph = 'The quick brown fox jumps over the lazy dog.';
     typedText = '';
     index = 0;
     errorIndex = [];
-    typedCharacterCount = 0;
+    errorCount = 0;
+    typedCharacterCount = 0; //characters typed so far
+    activeSession = false;
+    timeElapsed = 0; //in seconds
+    timer = null;
+    speed = 0;
+    accuracy = 0;
+    debug_toggle = false;
 
     get currentIndex() {
         return this.index;
@@ -20,12 +28,31 @@ export default class TypingApp extends LightningElement {
     }
     
     handleTextChange(event) {
+        if(this.activeSession === false) {
+            this.activeSession = true;
+            this.startTimer();
+        }
         this.processKeyStroke(event);
+        this.calculateAccuracy();
+        this.calculateSpeed();
     }
 
     processKeyStroke(event) {
         const typedParagraph = event.target.value;
         const typedlength = typedParagraph.length;
+
+        if(this.index == this.paragraphlength) {
+            //paragraph is over
+            const toastEvent = new ShowToastEvent({
+                title: 'Congratulations',
+                message: 'You have completed the typing test',
+                variant: 'success',
+            });
+            this.dispatchEvent(toastEvent);
+            clearInterval(this.timer);
+            alert('Test Over. Time taken: ' + this.timeElapsed + ' seconds');
+            return;
+        }
         
         if(this.typedCharacterCount < typedlength) {
             //new character is typed
@@ -42,11 +69,7 @@ export default class TypingApp extends LightningElement {
 
     validateKeyStroke(typedParagraph) {
         //check if the paragraph is over
-        if(this.index >= this.paragraphlength) {
-            this.template.querySelector('lightning-input').disabled = true;
-            return;
-        }
-
+       
         const currentCharacter = this.paragraph[this.index];
         const typedCharacter = typedParagraph[this.index];
         console.log('currentCharacter: ' + currentCharacter);
@@ -55,6 +78,7 @@ export default class TypingApp extends LightningElement {
             this.index++;
         } else {
             this.errorIndex.push(this.index);
+            this.errorCount++;
             this.index++;
         }
     }
@@ -67,6 +91,42 @@ export default class TypingApp extends LightningElement {
         }
     }
 
-    
+    startTimer() {
+        this.timer = setInterval(() => {
+            this.timeElapsed++;
+        }, 1000);
+    }
 
+    calculateAccuracy() {
+        const totalCharacters = this.typedCharacterCount;
+        const errorCharacters = this.errorCount;
+        const correctCharacters = totalCharacters - errorCharacters;
+        this.accuracy = Math.floor((correctCharacters/totalCharacters)*100);
+    }
+
+    calculateSpeed() {
+        const totalCharacters = this.typedCharacterCount;
+        const timeTaken = this.timeElapsed;
+        this.speed = Math.floor((totalCharacters/5)/(timeTaken/60));
+    }
+    
+    handleReset() {
+        this.reset();
+    }
+
+    reset() {
+        this.index = 0;
+        this.errorIndex = [];
+        this.typedCharacterCount = 0;
+        this.activeSession = false;
+        this.timeElapsed = 0;
+        this.accuracy = 0;
+        this.speed = 0;
+        this.template.querySelector('lightning-textarea').value = '';
+        clearInterval(this.timer);
+    }
+
+    toggleDebug() {
+        this.debug_toggle = !this.debug_toggle;
+    }
 }
